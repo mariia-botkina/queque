@@ -5,7 +5,7 @@ internal class Program
     private static void Main(string[] args)
     {
         
-            static void Menu()
+            static void Menu() //меню
         {
             Console.WriteLine("Выберите действие:");
             Console.WriteLine("1.Напечатать список.");
@@ -14,129 +14,121 @@ internal class Program
             Console.WriteLine("Для запуска действия введите число без дополнительных символов.");
             Console.WriteLine("Для выхода введите 'exit' без кавычек.");
         }
-        static void GetAnswer(Queue array)
+        static void GetAnswer(Queue array) //процедура получения данных от пользователя
         {
             Console.Write("Введите номер команды: ");
             string? userline = Console.ReadLine();
-            while (userline == null)
+            while (userline == null) //проверка, что строка не пустая
             {
-                Console.WriteLine("Ошибка. Введена пустая строка.");
+                Console.WriteLine("Ошибка. Введена пустая строка."); //вывод ошибки
                 Console.WriteLine("Введите команду еще раз: ");
-                userline = Console.ReadLine();
+                userline = Console.ReadLine(); //повторный ввод данных пользователем
             }
             if (userline.ToLower() != "exit")
             {
-                if (userline == "1")
+                if (userline == "1") 
                 {
-                    array.Print();
+                    array.Print(); //процедура печати очереди
                 }
                 else if (userline == "2")
                 {
-                    
-                    array.Enqueue();
+                    array.Enqueue(); //процедура добавления объекта в очередь
                 }
                 else if (userline == "3")
                 {
-                    array.Dequeue();
+                    array.Dequeue(); //процедура удаления объекта из очереди
                 }
-                else Console.WriteLine("Введена неизвестная команда.");
-                GetAnswer(array);
+                else Console.WriteLine("Введена неизвестная команда."); 
+                GetAnswer(array); //повторный запуск считывания ввода пользователя
             }
-            else
+            else //пользователь ввел 'exit'
             {
-                Console.WriteLine("Вы вышли из программы.");
+                Console.WriteLine("Вы вышли из программы."); //выход из программы
             }
         }
 
-        Queue queue = new Queue();
-        Menu();
+        Queue queue = new Queue(); //инициализация очереди
+        Menu(); //вывод меню
         GetAnswer(queue);
-        Console.ReadKey();
+        Console.ReadKey(); //задержка экрана
         
     }
 
-    struct IDK
+    class Queue //класс "очередь"
     {
-        public int? index { get; set; }
-    }
+        const int len = 4; //длина класса, константа
+        int?[] info = new int?[Queue.len]; //массив длины len
 
-    class Queue
-    {
-        const int len = 4;
-        int?[] info = new int?[Queue.len];
+        public int? head; //голова очереди
+        public int? tail; // хвост очереди
 
-        public IDK head;
-        public IDK tail;
-
-        public void Enqueue()
+        public void Enqueue() //процедура добавления элемента в очередь
         {
-            int GetData()
+            int GetData() //функция считывания нового элемента
             {
                 Console.Write("Введите новый элемент: ");
                 int num = Convert.ToInt32(Console.ReadLine());
                 return num;
             }
 
-            if (head.index == null)
+            if (head == null) //если нет головы, то заполняем
             {
-                head.index = 0;
-                info[(int)head.index] = GetData();
-                tail.index = 0;
+                head = 0;
+                tail = 0;
+                info[head] = GetData();
             }
-            else
+            else //голова заполнена
             {
-                if (tail.index < Queue.len - 1) tail.index++;
-                else tail.index = 0;
-                if (tail.index == head.index)
+                if (tail < Queue.len - 1) tail++; // индекс хвоста, куда будем добавлять элемент
+                else tail = 0; //если дошли до конца списка, то переходим в начало
+                if (tail == head) //хвост совпал с головой
                 {
-                    Console.WriteLine("Ошибка. Очередь полна.");
-                    if (tail.index == 0) tail.index = Queue.len - 1;
-                    else tail.index--;
+                    Console.WriteLine("Ошибка. Очередь полна."); 
+                    if (tail == 0) tail = Queue.len - 1; //возвращаем исходное значение хвоста
+                    else tail--;
                 }
-                else
+                else //хвост не совпал с головой
                 {
-                    info[(int)tail.index] = GetData();
+                    info[tail] = GetData(); //заполняем ячейку данными
                 }
             }
         }
         
-        public void Dequeue()
+        public void Dequeue() //удаление элемента из очереди
         {
-            if (head.index == null) Console.WriteLine("Ошибка. Очередь пуста.");
+            if (head == null) Console.WriteLine("Ошибка. Очередь пуста."); //нет элементов – очередь пуста
             else
             {
-                if (head.index != tail.index)
+                if (head != tail) //не один элемент в очереди
                 {
-                    info[(int)head.index] = null;
-                    if (head.index < Queue.len - 1) head.index++;
-                    else head.index = 0;
+                    info[head] = null; //обнуляем данные головы
+                    if (head < Queue.len - 1) head++; //обновляем индекс головы
+                    else head = 0;
                 }
-                else
+                else //один элемент в очереди
                 {
-                    info[(int)head.index] = null;
-                    head.index = null;
-                    tail.index = null;
+                    info[head] = null; //обнуляем все, список пуст
+                    head = null;
+                    tail = null;
                 }
             }
             
         }
-        public void Print()
+        public void Print() //печать очереди
         {
-            if (head.index == null) Console.WriteLine("Ошибка. Очередь пуста.");
-            else
+            if (head == null) Console.WriteLine("Ошибка. Очередь пуста.");
+            else //очередь не пуста
             {
                 Console.Write("Cписок:");
-                int? printed = head.index;
+                int? printed = head;
 
-
-                while (printed != tail.index)
+                while (printed != tail)
                 {
-                    Console.Write($" {info[(int)printed]}");
-                    if (printed < Queue.len - 1) printed++;
+                    Console.Write($" {info[printed]}");
+                    if (printed < Queue.len - 1) printed++; //обновляем индекс элемента
                     else printed = 0;
                 }
-                Console.WriteLine($" {info[(int)printed]}");
-
+                Console.WriteLine($" {info[printed]}"); //дописываем хвост
             }
         }
     }
